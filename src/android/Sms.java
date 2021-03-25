@@ -22,17 +22,13 @@ import org.json.JSONException;
 public class Sms extends CordovaPlugin {
 
 	public final String ACTION_SEND_SMS = "send";
-
 	public final String ACTION_HAS_PERMISSION = "has_permission";
-	
 	public final String ACTION_REQUEST_PERMISSION = "request_permission";
-
 	private static final String INTENT_FILTER_SMS_SENT = "SMS_SENT";
-
+	public static final String PERMISSION_DENIED_ERROR = "Send SMS permission denied";
+	public static final String SEND_SMS = Manifest.permission.SEND_SMS;
 	private static final int SEND_SMS_REQ_CODE = 0;
-
 	private static final int REQUEST_PERMISSION_REQ_CODE = 1;
-
 	private CallbackContext callbackContext;
 
 	private JSONArray args;
@@ -67,17 +63,17 @@ public class Sms extends CordovaPlugin {
 	}
 
 	private boolean hasPermission() {
-		return cordova.hasPermission(android.Manifest.permission.SEND_SMS);
+		return cordova.hasPermission(SEND_SMS);
 	}
 
 	private void requestPermission(int requestCode) {
-		cordova.requestPermission(this, requestCode, android.Manifest.permission.SEND_SMS);
+		cordova.requestPermission(this, requestCode, SEND_SMS);
 	}
 
 	public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) throws JSONException {
 		for (int r : grantResults) {
 			if (r == PackageManager.PERMISSION_DENIED) {
-				callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, "User has denied permission"));
+				callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, PERMISSION_DENIED_ERROR));
 				return;
 			}
 		}
